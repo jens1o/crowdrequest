@@ -38,6 +38,7 @@
 
             function initYT() {
                 if (isInitalized) return;
+                isInitalized = true;
 
                 // load yt api
                 let script = document.createElement('script');
@@ -53,8 +54,6 @@
                 console.log('Current queue', currentQueue);
             });
         </script>
-
-        <script src=""></script>
     </body>
 
 </html>
