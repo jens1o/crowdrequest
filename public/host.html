@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="en">
+
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <meta http-equiv="X-UA-Compatible" content="ie=edge">
+        <title>CrowdRequest - Host</title>
+    </head>
+
+    <body>
+        <h1>Host!</h1>
+        <div id="player"></div>
+
+        <script src="socket.io.js"></script>
+        <script>
+            const socket = io('http://localhost:8082');
+            const DEFAULT_VIDEO = 'qK_NeRZOdq4';
+            let currentQueue = ['744_W28kPks'];
+
+            let isInitalized = false;
+
+            function onYouTubeIframeAPIReady() {
+                player = new YT.Player('player', {
+                    height: '390',
+                    width: '640',
+                    videoId: currentQueue[0],
+                    events: {
+                        'onReady': event => event.target.playVideo(),
+                        'onStateChange': event => {
+                            if (event.data == YT.PlayerState.ENDED) {
+                                player.loadVideoById(currentQueue.shift() || DEFAULT_VIDEO);
+                            }
+                        }
+                    }
+                });
+            }
+
+            function initYT() {
+                if (isInitalized) return;
+
+                // load yt api
+                let script = document.createElement('script');
+                script.src = 'https://www.youtube.com/iframe_api';
+                document.getElementsByTagName('body')[0].appendChild(script);
+
+                console.log('Loading YT api …');
+            }
+
+            socket.on('video-queue', queueItems => {
+                initYT();
+                currentQueue = currentQueue.concat(queueItems);
+                console.log('Current queue', currentQueue);
+            });
+        </script>
+
+        <script src=""></script>
+    </body>
+
+</html>
